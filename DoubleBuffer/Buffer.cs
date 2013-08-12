@@ -4,19 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DoubleBuffer
+namespace BufferController
 {
     public sealed class Buffer<T>
     {
         private readonly Action<T> _consumerCallback;
-        private readonly Action _doneConsumingCallback;
         private readonly T[] _buffer;
         private int _capacityUsed = 0;
 
-        public Buffer(int capacity, Action<T> consumerCallback, Action doneConsumingCallback)
+        public Buffer(int capacity, Action<T> consumerCallback)
         {
             _consumerCallback = consumerCallback;
-            _doneConsumingCallback = doneConsumingCallback;
             _buffer = new T[capacity];
         }
 
@@ -38,13 +36,12 @@ namespace DoubleBuffer
 
         public void Consume()
         {
-            for (int i = 0; i < _capacityUsed -1; i++)
+            for (int i = 0; i < _capacityUsed; i++)
             {
                 _consumerCallback(_buffer[i]);
             }
 
             _capacityUsed = 0;
-            _doneConsumingCallback();
         }
     }
 }

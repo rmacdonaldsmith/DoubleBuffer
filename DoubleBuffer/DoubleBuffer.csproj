@@ -40,7 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Buffer.cs" />
-    <Compile Include="DoubleBuffer.cs" />
+    <Compile Include="BufferController.cs" />
+    <Compile Include="Switching\BlockingSwitchingStrategy.cs" />
+    <Compile Include="Switching\BusySpinWaitStrategy.cs" />
+    <Compile Include="Switching\ISwitchingStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace DoubleBuffer.UnitTests
+namespace BufferController.UnitTests
 {
     [TestFixture]
     public class BufferTests
@@ -14,9 +14,8 @@ namespace DoubleBuffer.UnitTests
         public void should_callback_when_done_consuming()
         {
             var numberOfElements = 1000;
-            var doneConsuming = false;
             var consumedCount = 0;
-            var buffer = new Buffer<int>(1000, i => consumedCount++, () => doneConsuming = true);
+            var buffer = new Buffer<int>(1000, i => consumedCount++);
 
             for (int i = 0; i < numberOfElements; i++)
             {
@@ -32,7 +31,6 @@ namespace DoubleBuffer.UnitTests
 
             Assert.IsFalse(buffer.HasData);
             Assert.AreEqual(consumedCount, numberOfElements);
-            Assert.IsTrue(doneConsuming);
         }
 
 
