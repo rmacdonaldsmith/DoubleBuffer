@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Threading;
 using BufferController;
+using DoubleBuffer.Switching;
 
 namespace DoubleBuffer
 {
@@ -12,56 +12,39 @@ namespace DoubleBuffer
         private readonly Buffer<T> _secondBuffer;
         private Buffer<T> _frontBufferPointer;
         private CurrentBuffer _frontBuffer;
-        private readonly object _producerLock = new object(); 
+        private readonly object _producerLock = new object();
+        private readonly ISwitchingStrategy<T> _switchingStrategy;  
 
         public BufferController(int capacity, Action<T> consumerCallBack)
         {
             _capacity = capacity;
             _consumerCallBack = consumerCallBack;
-            _firstBuffer = new Buffer<T>(_capacity, _consumerCallBack);
-            _secondBuffer = new Buffer<T>(_capacity, _consumerCallBack);
-            _frontBuffer = CurrentBuffer.First;
-            _frontBufferPointer = _firstBuffer;
+            _switchingStrategy = new MonitorSwitchingStrategy<T>(new Buffer<T>(_capacity, _consumerCallBack),
+                                                                 new Buffer<T>(_capacity, _consumerCallBack));
         }
 
         public void Consume()
         {
-            var frontBuffer = GetFrontBuffer();
-            if(frontBuffer.HasData)
-                frontBuffer.Consume();
+            if(_switchingStrategy.BackBuffer.HasData)
+                _switchingStrategy.BackBuffer.Consume();
 
             Switch();
         }
 
         public void Switch()
         {
-            if(_frontBuffer == CurrentBuffer.First)
-                Interlocked.Exchange<Buffer<T>>(ref _frontBufferPointer, _secondBuffer);
-            else
-            {
-                Interlocked.Exchange<Buffer<T>>(ref _frontBufferPointer, _firstBuffer);
-            }
+            _switchingStrategy.Switch();
         }
 
         public void Add(T data)
         {
-            //lock the producer while we switch the buffer
-            lock (_producerLock)
-            {
-                GetFrontBuffer().Add(data);
-            }
+            _switchingStrategy.FrontBuffer.Add(data);
         }
 
         public enum CurrentBuffer
         {
             First,
             Second
-        }
-
-        private Buffer<T> GetFrontBuffer()
-        {
-            _frontBufferPointer = CurrentBuffer.First ? _firstBuffer : _secondBuffer;
-            return _frontBuffer == CurrentBuffer.First ? _firstBuffer : _secondBuffer;
         }
     }
 }
