@@ -41,8 +41,8 @@
   <ItemGroup>
     <Compile Include="Buffer.cs" />
     <Compile Include="BufferController.cs" />
-    <Compile Include="Switching\BlockingSwitchingStrategy.cs" />
-    <Compile Include="Switching\BusySpinWaitStrategy.cs" />
+    <Compile Include="Switching\MonitorSwitchingStrategy.cs" />
+    <Compile Include="Switching\InterlockedSwitchingStrategy.cs" />
     <Compile Include="Switching\ISwitchingStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

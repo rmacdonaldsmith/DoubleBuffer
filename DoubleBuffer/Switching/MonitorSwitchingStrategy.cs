@@ -7,16 +7,16 @@ using BufferController;
 
 namespace DoubleBuffer.Switching
 {
-    public class BlockingSwitchingStrategy<T> : ISwitchingStrategy<T>
+    public class MonitorSwitchingStrategy<T> : ISwitchingStrategy<T>
     {
-        private Buffer<T> _frontBuffer;
-        private Buffer<T> _backBuffer;
+        private readonly List<Buffer<T>> _buffers;
+        private int _frontBufferIndex = 0;
+        private int _backBufferIndex = 1;
         private readonly object _lock = new object();
 
-        public BlockingSwitchingStrategy(Buffer<T> frontBuffer, Buffer<T> backBuffer)
+        public MonitorSwitchingStrategy(Buffer<T> frontBuffer, Buffer<T> backBuffer)
         {
-            _frontBuffer = frontBuffer;
-            _backBuffer = backBuffer;
+            _buffers = new List<Buffer<T>>(new []{frontBuffer, backBuffer});
         }
 
         public Buffer<T> FrontBuffer
@@ -25,7 +25,7 @@ namespace DoubleBuffer.Switching
             {
                 lock (_lock)
                 {
-                    return _frontBuffer;
+                    return _buffers[_frontBufferIndex];
                 }
             }
         }
@@ -36,7 +36,7 @@ namespace DoubleBuffer.Switching
             {
                 lock (_lock)
                 {
-                    return _backBuffer;
+                    return _buffers[_backBufferIndex];
                 }
             }
         }
@@ -45,7 +45,9 @@ namespace DoubleBuffer.Switching
         {
             lock (_lock)
             {
-                
+                var tempIndex = _frontBufferIndex;
+                _frontBufferIndex = _backBufferIndex;
+                _backBufferIndex = tempIndex;
             }
         }
     }

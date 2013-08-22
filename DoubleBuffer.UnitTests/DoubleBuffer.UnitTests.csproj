@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="BufferTests.cs" />
     <Compile Include="ConsumingTests.cs" />
+    <Compile Include="InterlockedSwitchingStrategyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
