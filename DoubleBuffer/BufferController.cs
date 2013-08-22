@@ -8,11 +8,6 @@ namespace DoubleBuffer
     {
         private readonly int _capacity;
         private readonly Action<T> _consumerCallBack;
-        private readonly Buffer<T> _firstBuffer;
-        private readonly Buffer<T> _secondBuffer;
-        private Buffer<T> _frontBufferPointer;
-        private CurrentBuffer _frontBuffer;
-        private readonly object _producerLock = new object();
         private readonly ISwitchingStrategy<T> _switchingStrategy;  
 
         public BufferController(int capacity, Action<T> consumerCallBack)
