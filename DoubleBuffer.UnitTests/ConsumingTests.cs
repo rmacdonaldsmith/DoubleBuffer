@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using DoubleBuffer;
+using DoubleBuffer.UnitTests;
 using NUnit.Framework;
 
 namespace BufferController.UnitTests
@@ -11,20 +8,30 @@ namespace BufferController.UnitTests
     [TestFixture]
     public class ConsumingTests
     {
+        private BufferController<Event<long>> _doubleBuffer;
 
         [Test]
         public void should_publish_data_when_added()
         {
-            var publishedCounter = 0; 
-            var doubleBuffer = new BufferController<int>(1001, _ => publishedCounter++);
-            const int writeCount = 1000;
+            const int writeCount = 999;
+            var consumedValue = 0L;
+            var mre = new ManualResetEvent(false);
+            var consumeHandler = new ConsumeEventHandler(writeCount, mre);
+            _doubleBuffer = new BufferController<Event<long>>(1000, evnt =>
+                {
+                    consumedValue = evnt.Value;
+                    consumeHandler.OnNext(evnt);
+                });
 
-            for (int data = 0; data < writeCount; data++)
+            new Thread(() => _doubleBuffer.Start()).Start();
+
+            for (int data = 0; data <= writeCount; data++)
             {
-                doubleBuffer.Add(data);
+                _doubleBuffer.Add(new Event<long>(data));
             }
 
-            Assert.AreEqual(writeCount, publishedCounter);
+            mre.WaitOne();
+            Assert.AreEqual(writeCount, consumeHandler.CurrentValue);
         }
     }
 }

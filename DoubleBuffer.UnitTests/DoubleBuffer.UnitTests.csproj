@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BufferTests.cs" />
+    <Compile Include="ConsumeEventHandler.cs" />
     <Compile Include="ConsumingTests.cs" />
     <Compile Include="InterlockedSwitchingStrategyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

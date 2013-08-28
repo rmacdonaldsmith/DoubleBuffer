@@ -21,7 +21,7 @@ namespace DoubleBuffer.UnitTests
             switchingStrategy.Switch();
 
             Assert.AreSame(buffer2, switchingStrategy.FrontBuffer);
-            Assert.AreSame(buffer1, switchingStrategy.FrontBuffer);
+            Assert.AreSame(buffer1, switchingStrategy.BackBuffer);
         }
     }
 }

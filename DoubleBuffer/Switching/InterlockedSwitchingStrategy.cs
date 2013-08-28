@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using BufferController;
 
 namespace DoubleBuffer.Switching
@@ -42,6 +40,8 @@ namespace DoubleBuffer.Switching
                 Interlocked.Increment(ref _frontBufferIndex);
             else
                 Interlocked.Decrement(ref _frontBufferIndex);
+
+            //Console.WriteLine("Front Buffer: " + _frontBufferIndex);
         }
     }
 }
